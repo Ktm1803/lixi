@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quay Thưởng Tiền Việt Nam</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .input-field {
+            margin-bottom: 10px;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: blue;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: darkblue;
+        }
+        .amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: green;
+        }
+        .notification {
+            margin-top: 10px;
+            font-size: 16px;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quay Thưởng Tiền Việt Nam</h1>
+    <input type="text" id="fullname" placeholder="Nhập họ và tên" class="input-field">
+    <div class="card">
+        <p id="result" class="amount">Nhấn nút để quay thưởng</p>
+    </div>
+    <button class="button" onclick="spinWheel()">Quay Ngay</button>
+    <p id="notification" class="notification"></p>
+    
+    <script>
+        const denominations = [1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000];
+        const vietnameseNameRegex = /^[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠ-ỹ ]+$/i;
+
+        function spinWheel() {
+            const fullname = document.getElementById("fullname").value.trim();
+            const notification = document.getElementById("notification");
+            notification.textContent = "";
+            
+            if (fullname === "") {
+                alert("Vui lòng nhập họ và tên trước khi quay!");
+                return;
+            }
+            
+            if (!vietnameseNameRegex.test(fullname)) {
+                alert("Vui lòng nhập tên bằng tiếng Việt hợp lệ!");
+                return;
+            }
+            
+            const randomIndex = Math.floor(Math.random() * denominations.length);
+            const amountWon = denominations[randomIndex];
+            document.getElementById("result").textContent = fullname + " nhận được " + amountWon.toLocaleString() + " VND";
+            
+            sendDataToGoogleSheet(fullname, amountWon);
+        }
+
+        function sendDataToGoogleSheet(name, amount) {
+            const scriptURL = 'AKfycbxGZ1I4Jw25TYKGbpMtLdVVu2dxMco8eZO-_6eM_g7W0VLE0qR49EjI7cqfjIBh2r5U';
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('amount', amount);
+            
+            fetch(scriptURL, { method: 'POST', body: formData })
+                .then(response => {
+                    document.getElementById("notification").textContent = "Dữ liệu đã được gửi thành công!";
+                    document.getElementById("notification").style.color = "green";
+                })
+                .catch(error => {
+                    document.getElementById("notification").textContent = "Lỗi khi gửi dữ liệu!";
+                    document.getElementById("notification").style.color = "red";
+                    console.error('Lỗi!', error.message);
+                });
+        }
+    </script>
+</body>
+</html>
