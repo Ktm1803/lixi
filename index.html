@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quay Thưởng Dầu Năm Pink Dev</title>
+    <title>Quay Thưởng Pink Dev</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,6 +27,7 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
+            min-width: 200px;
         }
         .button {
             margin-top: 20px;
@@ -82,29 +83,42 @@
                 return;
             }
             
-            const randomIndex = Math.floor(Math.random() * denominations.length);
-            const amountWon = denominations[randomIndex];
-            document.getElementById("result").textContent = fullname + " nhận được " + amountWon.toLocaleString() + " VND";
-            
-            sendDataToGoogleSheet(fullname, amountWon);
+            let resultElement = document.getElementById("result");
+            let counter = 0;
+            const spinInterval = setInterval(() => {
+                resultElement.textContent = denominations[Math.floor(Math.random() * denominations.length)].toLocaleString() + " VND";
+                counter++;
+                if (counter > 50) { 
+                    clearInterval(spinInterval);
+                    const amountWon = denominations[Math.floor(Math.random() * denominations.length)];
+                    resultElement.textContent = fullname + " nhận được " + amountWon.toLocaleString() + " VND";
+                    sendDataToGoogleSheet(fullname, amountWon);
+                }
+            }, 100);
         }
 
         function sendDataToGoogleSheet(name, amount) {
             const scriptURL = 'https://script.google.com/macros/s/AKfycbxW2n9Bfhla1aTmOp3rf1DSnJ1s0JsWUPnWK8ZlLJsK8PZWq3lWafKlgF0oAQAZlbTWvA/exec';
-            const formData = new FormData();
-            formData.append('name', name);
-            formData.append('amount', amount);
-            
-            fetch(scriptURL, { method: 'POST', body: formData })
-                .then(response => {
-                    document.getElementById("notification").textContent = "Dữ liệu đã được gửi thành công!";
-                    document.getElementById("notification").style.color = "green";
-                })
-                .catch(error => {
-                    document.getElementById("notification").textContent = "Lỗi khi gửi dữ liệu!";
-                    document.getElementById("notification").style.color = "red";
-                    console.error('Lỗi!', error.message);
-                });
+            const data = new URLSearchParams();
+            data.append('name', name);
+            data.append('amount', amount);
+
+            fetch(scriptURL, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: data
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log("Phản hồi từ server:", data);
+                document.getElementById("notification").textContent = "Dữ liệu đã gửi thành công!";
+                document.getElementById("notification").style.color = "green";
+            })
+            .catch(error => {
+                document.getElementById("notification").textContent = "Lỗi khi gửi dữ liệu!";
+                document.getElementById("notification").style.color = "red";
+                console.error('Lỗi gửi dữ liệu:', error);
+            });
         }
     </script>
 </body>
