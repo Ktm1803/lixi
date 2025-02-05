@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quay Thưởng Tiền Việt Nam</title>
+    <title>Quay Thưởng Dầu Năm Pink Dev</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -55,7 +55,7 @@
     </style>
 </head>
 <body>
-    <h1>Quay Thưởng Tiền Việt Nam</h1>
+    <h1>Quay Thưởng Pink Dev</h1>
     <input type="text" id="fullname" placeholder="Nhập họ và tên" class="input-field">
     <div class="card">
         <p id="result" class="amount">Nhấn nút để quay thưởng</p>
@@ -90,7 +90,7 @@
         }
 
         function sendDataToGoogleSheet(name, amount) {
-            const scriptURL = 'AKfycbzbIW09F_Hpo9qDwaB4nFvxu96ZZ0fiZ5lOfJGGvm4_TedzCJFJtwLr1McsjNKVCi4YiQ';
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxW2n9Bfhla1aTmOp3rf1DSnJ1s0JsWUPnWK8ZlLJsK8PZWq3lWafKlgF0oAQAZlbTWvA/exec';
             const formData = new FormData();
             formData.append('name', name);
             formData.append('amount', amount);
